@@ -1,0 +1,43 @@
+{
+  "title": "ClientFrameworkForCocos",
+  "packageName": "",
+  "startScene": "45df88c0-4a48-4351-9e22-37f1bd4dd7f0",
+  "excludeScenes": [],
+  "includeSDKBox": false,
+  "orientation": {
+    "landscapeLeft": true,
+    "landscapeRight": true,
+    "portrait": false,
+    "upsideDown": false
+  },
+  "webOrientation": "auto",
+  "inlineSpriteFrames": true,
+  "inlineSpriteFrames_native": true,
+  "mergeStartScene": false,
+  "optimizeHotUpdate": false,
+  "md5Cache": false,
+  "encryptJs": true,
+  "xxteaKey": "94452b03-1214-41",
+  "zipCompressJs": true,
+  "fb-instant-games": {},
+  "android": {
+    "packageName": ""
+  },
+  "ios": {
+    "packageName": ""
+  },
+  "mac": {
+    "packageName": ""
+  },
+  "win32": {},
+  "android-instant": {
+    "REMOTE_SERVER_ROOT": "",
+    "host": "",
+    "packageName": "",
+    "pathPattern": "",
+    "recordPath": "",
+    "scheme": "https",
+    "skipRecord": false
+  },
+  "appBundle": false
+}
