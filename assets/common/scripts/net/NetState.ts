@@ -13,7 +13,7 @@ import { ServeInEventDefine } from "../ProjectEvents/ServeInEventDefine";
 import { GlobalDataCenter } from "../GlobalDataCenter";
 
 import { ServeOutEventDefine } from "../ProjectEvents/ServeOutEventDefine";
-import { getRoundtrip } from "../ProtocolConfig";
+import { getRoundtrip } from "../protocol_dispatch/ProtocolConfig";
 
 /*
  * Filename: /Users/kinnonzhang/SY01/assets/common/scripts/net/NetState.ts

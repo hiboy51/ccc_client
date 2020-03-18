@@ -1,4 +1,4 @@
-import StateMachine from "../StateMachine";
+import StateMachine from "../state_machine/StateMachine";
 import Net from "./Net";
 import { GlobalDataCenter } from "../GlobalDataCenter";
 import ProjectConfigs from "../ProjectConfigs";
@@ -13,10 +13,10 @@ import {
 } from "./NetState";
 import SYEventManager from "../SYEventManager";
 import { CustomEventDefine } from "../ProjectEvents/CustomEventDefine";
-import PM from "../PopupManager";
+import PM from "../popup_manager/PopupManager";
 import { ServeOutEventDefine } from "../ProjectEvents/ServeOutEventDefine";
 import { performAsyncWithErrorCatch } from "../Flow";
-import { fetchable } from "../ProtocolConfig";
+import { fetchable } from "../protocol_dispatch/ProtocolConfig";
 import Utils from "../Utils";
 import { injectable } from "../DI/DI";
 import { async } from "q";

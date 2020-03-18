@@ -1,6 +1,6 @@
-import { CustomEventDefine } from "./ProjectEvents/CustomEventDefine";
-import { ServeInEventDefine } from "./ProjectEvents/ServeInEventDefine";
-import { ServeOutEventDefine } from "./ProjectEvents/ServeOutEventDefine";
+import { CustomEventDefine } from "../ProjectEvents/CustomEventDefine";
+import { ServeInEventDefine } from "../ProjectEvents/ServeInEventDefine";
+import { ServeOutEventDefine } from "../ProjectEvents/ServeOutEventDefine";
 
 declare function require(moduleName: string): any;
 

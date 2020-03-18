@@ -1,4 +1,4 @@
-import AudioMgr from "../AudioMgr";
+import AudioMgr from "../audio_manager/AudioMgr";
 
 /*
  * Filename: /Users/kinnonzhang/SY01/assets/common/scripts/ClickEffect.ts

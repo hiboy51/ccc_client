@@ -1,4 +1,4 @@
-import { duplicated } from "../ProtocolConfig";
+import { duplicated } from "../protocol_dispatch/ProtocolConfig";
 
 export class ServeInEventDefine {
     public static SEI_HALL_AUTHOR = "2|1"; //大厅授权

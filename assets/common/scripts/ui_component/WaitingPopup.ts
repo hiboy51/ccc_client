@@ -1,4 +1,4 @@
-import PopupBase, { IUIAnimation, UIAnimationStyle } from "./PopupBase";
+import PopupBase, { IUIAnimation, UIAnimationStyle } from "../popup_manager/PopupBase";
 
 /*
  * Filename: /Users/kinnonzhang/SY01/assets/common/scripts/WaitingPopup.ts

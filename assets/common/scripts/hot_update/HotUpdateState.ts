@@ -1,4 +1,4 @@
-import { MachineState, MACHINE_STATE_CHANGE_CALLBACK } from "../StateMachine";
+import { MachineState, MACHINE_STATE_CHANGE_CALLBACK } from "../state_machine/StateMachine";
 import HotUpdateManager, { HotUpdateStateEnum } from "./HotUpdateManager";
 
 /*
@@ -6,21 +6,22 @@ import HotUpdateManager, { HotUpdateStateEnum } from "./HotUpdateManager";
  * Path: /Users/kinnonzhang/SY02
  * Created Date: Wednesday, October 23rd 2019, 6:03:18 pm
  * Author: kinnonzhang
- * 
+ *
  * Copyright (c) 2019 Your Company
  */
 
 export abstract class HotUpdateState implements MachineState {
     protected _machine: HotUpdateManager;
     protected _flag: HotUpdateStateEnum = null;
-    public get flag() {return this._flag;}
+    public get flag() {
+        return this._flag;
+    }
 
     constructor(ma: HotUpdateManager) {
         this._machine = ma;
     }
 
-    onEnterState(pre: MachineState): void {
-    }
+    onEnterState(pre: MachineState): void {}
 
     onExitState(next: MachineState, succ: MACHINE_STATE_CHANGE_CALLBACK): void {
         succ(true);
@@ -53,8 +54,12 @@ export class HotUpdateStateError extends HotUpdateState {
     private _code: number;
     private _msg: string;
 
-    public get code() {return this._code;}
-    public get msg() {return this._msg;}
+    public get code() {
+        return this._code;
+    }
+    public get msg() {
+        return this._msg;
+    }
 
     constructor(ma: HotUpdateManager, code: number, msg: string = "") {
         super(ma);
@@ -81,7 +86,9 @@ export enum HotUpdateCheckResultEnum {
 }
 export class HotUpdateStatePrepared extends HotUpdateState {
     private _needUpdate: boolean = false;
-    public get needUpdate() {return this._needUpdate;}
+    public get needUpdate() {
+        return this._needUpdate;
+    }
 
     private _checkAsync: Function = null;
     constructor(ma: HotUpdateManager) {
@@ -128,8 +135,7 @@ export class HotUpdateStatePrepared extends HotUpdateState {
         let code = event.getEventCode();
         let msg: string = "";
         cc.log(`checkListener event code = ${code}`);
-        switch (code)
-        {
+        switch (code) {
             case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
                 msg = "No local manifest file found.";
                 this._machine.changeState(new HotUpdateStateError(this._machine, code, msg));
@@ -149,7 +155,7 @@ export class HotUpdateStatePrepared extends HotUpdateState {
                 this._checkAsync = null;
                 break;
             case jsb.EventAssetsManager.NEW_VERSION_FOUND:
-                cc.log('New version found, please try to update.');
+                cc.log("New version found, please try to update.");
                 this._checkAsync && this._checkAsync(HotUpdateCheckResultEnum.NEED_UPDATE);
                 this._checkAsync = null;
                 this._needUpdate = true;
@@ -192,7 +198,7 @@ export class HotUpdateStateUpdating extends HotUpdateState {
         //     cc.log("can not interrupt hotupdating");
         //     return succ(false);
         // }
-        
+
         // this._updateAsync = null;
         let am = this._machine.am;
         am.setEventCallback(null);
@@ -219,7 +225,7 @@ export class HotUpdateStateUpdating extends HotUpdateState {
         }
         let am = this._machine.am;
         am.downloadFailedAssets();
-        return new Promise(resolve => this._updateAsync = resolve);
+        return new Promise(resolve => (this._updateAsync = resolve));
     }
 
     // ====================================================================================
@@ -229,14 +235,13 @@ export class HotUpdateStateUpdating extends HotUpdateState {
         let code = event.getEventCode();
         cc.log(`updateListener event code = ${code}`);
         let msg = "";
-        switch (code)
-        {
+        switch (code) {
             case jsb.EventAssetsManager.UPDATE_PROGRESSION:
                 let progressHandler = this._machine.progressHandler;
                 progressHandler && progressHandler(event);
                 break;
             case jsb.EventAssetsManager.UPDATE_FINISHED:
-                cc.log('Update finished. ' + event.getMessage());
+                cc.log("Update finished. " + event.getMessage());
                 let searchPaths = jsb.fileUtils.getSearchPaths();
                 let newPaths = this._machine.am.getLocalManifest().getSearchPaths();
                 console.log(JSON.stringify(newPaths));
@@ -244,19 +249,19 @@ export class HotUpdateStateUpdating extends HotUpdateState {
                 // This value will be retrieved and appended to the default search path during game startup,
                 // please refer to samples/js-tests/main.js for detailed usage.
                 // !!! Re-add the search paths in main.js is very important, otherwise, new scripts won't take effect.
-                cc.sys.localStorage.setItem('HotUpdateSearchPaths', JSON.stringify(searchPaths));
+                cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(searchPaths));
                 jsb.fileUtils.setSearchPaths(searchPaths);
                 this._machine.changeState(new HotUpdateStateUninit(this._machine));
                 this._updateAsync && this._updateAsync(HotUpdateResultEnum.SUCCESS);
                 this._updateAsync = null;
                 break;
             case jsb.EventAssetsManager.UPDATE_FAILED:
-                cc.log('Update failed. ' + event.getMessage());
+                cc.log("Update failed. " + event.getMessage());
                 this._updateAsync && this._updateAsync(HotUpdateResultEnum.FAIL);
                 this._updateAsync = null;
                 break;
             case jsb.EventAssetsManager.ERROR_UPDATING:
-                msg = 'Asset update error: ' + event.getAssetId() + ', ' + event.getMessage();
+                msg = "Asset update error: " + event.getAssetId() + ", " + event.getMessage();
                 this._machine.changeState(new HotUpdateStateError(this._machine, code, msg));
                 this._updateAsync && this._updateAsync(HotUpdateResultEnum.ERROR);
                 this._updateAsync = null;
@@ -269,6 +274,6 @@ export class HotUpdateStateUpdating extends HotUpdateState {
                 break;
             default:
                 break;
-        }        
+        }
     }
 }

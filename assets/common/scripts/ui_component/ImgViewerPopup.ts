@@ -1,5 +1,5 @@
-import PopupBase from "../PopupBase";
-import PM from "../PopupManager";
+import PopupBase from "../popup_manager/PopupBase";
+import PM from "../popup_manager/PopupManager";
 
 /*
  * File: ImgViwerPopup.ts

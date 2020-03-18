@@ -1,4 +1,4 @@
-import StateMachine from "../StateMachine";
+import StateMachine from "../state_machine/StateMachine";
 import {
     HotUpdateStateUninit,
     HotUpdateStateError,

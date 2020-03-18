@@ -1,4 +1,4 @@
-import { roundtrip } from "../ProtocolConfig";
+import { roundtrip } from "../protocol_dispatch/ProtocolConfig";
 
 export class ServeOutEventDefine {
     @roundtrip

@@ -1,4 +1,4 @@
-import DataBing from "./DataBinding";
+import DataBing from "./display/DataBinding";
 
 export class GlobalDataCenter extends DataBing {
     public static readonly Instance: GlobalDataCenter = new GlobalDataCenter();
@@ -105,7 +105,6 @@ export class GlobalDataCenter extends DataBing {
     public get horn() {
         return this._horn;
     }
-    
 
     //玩家保险箱金额
     protected _coinInSavebox: number = 0;
@@ -166,7 +165,6 @@ export class GlobalDataCenter extends DataBing {
         return this._currentField;
     }
 
-
     protected _hasBindPhone: boolean = false;
     public set hasBindPhone(v: boolean) {
         this._hasBindPhone = v;
@@ -182,7 +180,6 @@ export class GlobalDataCenter extends DataBing {
     public get bindPhoneNum() {
         return this._bindPhoneNum;
     }
-
 
     //银行阿里信息
     protected _hasBindCashInfo: boolean = false;
@@ -257,7 +254,6 @@ export class GlobalDataCenter extends DataBing {
         return this._bindCashBankSubTitle;
     }
 
-
     // updateType
     public _updateType: string = "LOGIN_UPDATE";
     public set updateType(t: string) {
@@ -270,7 +266,7 @@ export class GlobalDataCenter extends DataBing {
     // 大厅排行榜数据
     public _rankMetaData: any = {
         wealthList: [],
-        beautyList: [],
+        beautyList: []
     };
     public set rankMetaData(t: any) {
         this._rankMetaData = t;
@@ -279,6 +275,4 @@ export class GlobalDataCenter extends DataBing {
     public get rankMetaData() {
         return this._rankMetaData;
     }
-    
-
 }
