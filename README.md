@@ -78,6 +78,6 @@ v **2.3.1**
 
 - [全局事件监听系统](assets/common/scripts/SYEventManager.ts)
 
-#### 备注
+### 说明
 
 <a id="note1" href="#note1ref"><sup>1</sup></a>因ccc的材质系统升级，已经失效，待适配新系统后再提供
