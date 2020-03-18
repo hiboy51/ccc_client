@@ -1,4 +1,4 @@
-import AudioMgr from "../../common/scripts/AudioMgr";
+import AudioMgr from "./audio_manager/AudioMgr";
 import Utils from "../../common/scripts/Utils";
 
 const { ccclass, property } = cc._decorator;
