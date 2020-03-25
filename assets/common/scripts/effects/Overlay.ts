@@ -1,4 +1,4 @@
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Overlay extends cc.Component {
@@ -8,30 +8,30 @@ export default class Overlay extends cc.Component {
     @property(cc.Sprite)
     sp_plus: cc.Sprite = null;
 
-    private _mat4_temp: cc.Mat4 = new cc.Mat4(
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0
-    );
-    
+    private _mat4_temp: cc.Mat4 = new cc.Mat4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
     private _curMaterial: any;
     // ====================================================================================
     // life cycle
     // ====================================================================================
     start() {
         this._curMaterial = this.sp_plus.getMaterial(0) as any;
-        this._curMaterial = cc.Material.getInstantiatedMaterial(this._curMaterial, this.sp_plus);
-        this._curMaterial.setProperty("base_ax", this.sp_base.node.getContentSize().width * this.sp_base.node.anchorX);
-        this._curMaterial.setProperty("base_ay", this.sp_base.node.getContentSize().height * this.sp_base.node.anchorY);
+        this._curMaterial = cc.MaterialVariant.create(this._curMaterial, this.sp_plus);
+        this._curMaterial.setProperty(
+            "base_ax",
+            this.sp_base.node.getContentSize().width * this.sp_base.node.anchorX
+        );
+        this._curMaterial.setProperty(
+            "base_ay",
+            this.sp_base.node.getContentSize().height * this.sp_base.node.anchorY
+        );
     }
-    
+
     update() {
         if (this.sp_base.spriteFrame.textureLoaded()) {
             this._commitTextureBase();
-        }
-        else {
-            this.sp_base.spriteFrame.once('load', () => {
+        } else {
+            this.sp_base.spriteFrame.once("load", () => {
                 !!this.node && !!this.node.parent && this._commitTextureBase();
             });
             this.sp_base.spriteFrame.ensureLoadTexture();
@@ -58,7 +58,7 @@ export default class Overlay extends cc.Component {
         let ts = cc.v2(base_tex.width, base_tex.height);
         this._curMaterial.setProperty("base_tex_size", ts);
     }
-    
+
     private _updateMatrix() {
         this.sp_base.node["_updateWorldMatrix"]();
         this.sp_plus.node["_updateWorldMatrix"]();

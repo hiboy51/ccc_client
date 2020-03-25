@@ -81,3 +81,9 @@ v **2.3.1**
 ### 说明
 
 <a id="note1" href="#note1ref"><sup>1</sup></a>因ccc的材质系统升级，已经失效，待适配新系统后再提供
+
+## 前端总结
+
+### cocos creator 渲染流程分析
+
+![refer](./ccc-render-reference.png)

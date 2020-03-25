@@ -1,0 +1,17 @@
+{
+  "__type__": "cc.Material",
+  "_name": "circle",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "bb8e378a-f325-4d07-9449-8c8c12560480"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {
+        "USE_TEXTURE": true
+      }
+    }
+  }
+}

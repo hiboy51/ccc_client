@@ -3,10 +3,10 @@
  * Path: /Users/kinnonzhang/SY01
  * Created Date: Monday, August 26th 2019, 4:29:38 pm
  * Author: kinnonzhang
- * 
+ *
  * Copyright (c) 2019 Your Company
  */
-const {ccclass, property, executeInEditMode} = cc._decorator;
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
 @ccclass
 @executeInEditMode
@@ -25,10 +25,8 @@ export default class WaveEffect extends cc.Component {
         if (this.use) {
             this._material = this._render.getMaterial(0);
             this._startTime = new Date().getTime();
-        }
-        else {
-            let builtin = cc.Material.getBuiltinMaterial("2d-sprite");
-            let m = cc.Material.getInstantiatedMaterial(builtin, this._render);
+        } else {
+            let m = cc.MaterialVariant.createWithBuiltin("2d-sprite", this._render);
             this._render.setMaterial(0, m);
         }
     }
@@ -36,10 +34,10 @@ export default class WaveEffect extends cc.Component {
     update(dt: number) {
         if (this.use) {
             let elapse = (new Date().getTime() - this._startTime) / 1000;
-            let m = cc.Material.getInstantiatedMaterial(this._material, this._render);
+            let m = cc.MaterialVariant.create(this._material, this._render);
             m.setProperty("elapse", elapse);
             m.setProperty("winsize", cc.v2(this.node.width, this.node.height));
-            this._render["setMaterial"](0, m);
+            this._render.setMaterial(0, m);
         }
     }
 }

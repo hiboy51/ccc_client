@@ -98,8 +98,7 @@ export default class Utils {
         let comp_sprite = nd.getComponent(cc.Sprite);
         if (comp_sprite) {
             let material = g ? "2d-gray-sprite" : "2d-sprite";
-            let m = cc.Material.getBuiltinMaterial(material);
-            m = cc.Material.getInstantiatedMaterial(m, comp_sprite);
+            let m = cc.MaterialVariant.createWithBuiltin(material, comp_sprite);
             comp_sprite.setMaterial(0, m);
         }
         nd.children.forEach(each => Utils.gray(each, g));
