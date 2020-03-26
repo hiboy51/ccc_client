@@ -4,7 +4,8 @@
 
 ### ccc版本
 
-v **2.3.1**
+v ~~**2.3.1**~~  
+v **2.3.2**
 
 ### 包括并不仅限于以下列举的内容  
 
@@ -86,4 +87,4 @@ v **2.3.1**
 
 ### cocos creator 渲染流程分析
 
-![refer](./ccc-render-reference.png)
+![refer](./cocos-creator2.3.1渲染架构分析.png)
