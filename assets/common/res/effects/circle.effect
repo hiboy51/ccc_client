@@ -32,7 +32,6 @@ CCProgram vs %{
   #endif
 
   vec4 vert() {
-
     vec4 pos = vec4(a_position, 1);
 
     #if CC_USE_MODEL
@@ -64,6 +63,15 @@ CCProgram fs %{
   uniform sampler2D texture;
   #endif
 
+  #if USE_CIRCLE
+  uniform CircleRadius {
+    vec4 f4_borders;
+    float f4_radius;
+    float f4_widthInPixel;
+    float f4_heightInPixel;
+  };
+  #endif
+
   vec4 frag() {
     vec4 o = vec4(1, 1, 1, 1);
 
@@ -71,6 +79,19 @@ CCProgram fs %{
     o *= texture(texture, v_uv0);
       #if CC_USE_ALPHA_ATLAS_TEXTURE
       o.a *= texture2D(texture, v_uv0 + vec2(0, 0.5)).r;
+      #endif
+
+      #if USE_CIRCLE
+        float f_width = abs(f4_borders[1] - f4_borders[0]);
+        float f_height = abs( f4_borders[3] - f4_borders[2] );
+        float f_centerU = f_width / 2.0 + f4_borders[0];
+        float f_centerV =  f_height / 2.0 + f4_borders[2];
+        vec2 centerUv = vec2(f_centerU, f_centerV);
+        vec2 toCenter = centerUv - v_uv0;
+        float dis = sqrt(pow(toCenter.x * f4_widthInPixel, 2.0) + pow(toCenter.y * f4_heightInPixel, 2.0));
+        if (dis > f4_radius) {
+          discard;
+        }
       #endif
     #endif
 
