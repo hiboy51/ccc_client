@@ -16,14 +16,14 @@ export default class WaveEffect extends cc.Component {
 
     private _startTime: number = 0;
     private _render: cc.Sprite;
-    private _material: any;
+    private _material: cc.Material;
     // ====================================================================================
     // life cycle
     // ====================================================================================
     start() {
         this._render = this.node.getComponent(cc.Sprite);
+        this._material = this._render.getMaterial(0);
         if (this.use) {
-            this._material = this._render.getMaterial(0);
             this._startTime = new Date().getTime();
         } else {
             let m = cc.MaterialVariant.createWithBuiltin("2d-sprite", this._render);
@@ -35,8 +35,8 @@ export default class WaveEffect extends cc.Component {
         if (this.use) {
             let elapse = (new Date().getTime() - this._startTime) / 1000;
             let m = cc.MaterialVariant.create(this._material, this._render);
-            m.setProperty("elapse", elapse);
-            m.setProperty("winsize", cc.v2(this.node.width, this.node.height));
+            m.setProperty("f4_elapse", elapse);
+            m.setProperty("v2_winsize", cc.v2(this.node.width, this.node.height));
             this._render.setMaterial(0, m);
         }
     }

@@ -1,0 +1,111 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.  
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs:vert
+      frag: fs:frag
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        alphaThreshold: { value: 0.5 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+  #endif
+
+  vec4 vert () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if CC_USE_MODEL
+    pos = cc_matViewProj * cc_matWorld * pos;
+    #else
+    pos = cc_matViewProj * pos;
+    #endif
+
+    #if USE_TEXTURE
+    v_uv0 = a_uv0;
+    #endif
+
+    v_color = a_color;
+
+    return pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+  
+  #include <alpha-test>
+
+  in vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+  #endif
+
+  #if USE_EFFECT
+  uniform UWaveType {
+    vec2 v2_winsize;
+    float f4_elapse;
+  };
+
+  #define F cos(x-y)*cos(y),sin(x+y)*sin(y)
+
+  #endif
+
+  vec2 s(vec2 p) {
+    float d = f4_elapse * 0.2;
+    float x = 8.0 * (p.x + d);
+    float y = 8.0 * (p.y + d);
+    return vec2(F);
+  }
+
+  vec4 wave() {
+    vec2 rs = v2_winsize.xy;
+    vec2 q = v_uv0 + 2.0 / rs.x * (s(v_uv0) - s(v_uv0 + rs));
+    q.y = 1.0 - q.y;
+    return texture(texture, q);
+  }
+
+  vec4 frag () {
+    vec4 o = vec4(1, 1, 1, 1);
+
+    #if USE_TEXTURE
+      #if USE_EFFECT
+        o *= wave();
+      #else
+        o *= texture(texture, v_uv0);
+      #endif
+
+      #if CC_USE_ALPHA_ATLAS_TEXTURE
+      o.a *= texture2D(texture, v_uv0 + vec2(0, 0.5)).r;
+      #endif
+    #endif
+
+    o *= v_color;
+
+    ALPHA_TEST(o);
+
+    return o;
+  }
+}%
