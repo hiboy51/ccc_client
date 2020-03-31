@@ -1,8 +1,10 @@
 {
   "title": "ClientFrameworkForCocos",
   "packageName": "",
-  "startScene": "45df88c0-4a48-4351-9e22-37f1bd4dd7f0",
-  "excludeScenes": [],
+  "startScene": "f53e8004-fada-40bb-850b-d5efcae4b1e7",
+  "excludeScenes": [
+    "45df88c0-4a48-4351-9e22-37f1bd4dd7f0"
+  ],
   "includeSDKBox": false,
   "orientation": {
     "landscapeLeft": true,

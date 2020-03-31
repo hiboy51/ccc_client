@@ -6,6 +6,10 @@
 /temp/
 /local/
 /build/
+/assets/testfapai/
+/assets/testfapai.meta
+/assets/test_fapai.fire
+/assets/test_fapai.fire.meta
 
 #/////////////////////////////////////////////////////////////////////////////
 # npm files
