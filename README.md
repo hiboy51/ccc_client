@@ -45,7 +45,9 @@ v **2.3.2**
 
 - [通用性强的UI组件](#通用UI组件)
 
-- ~~可能用的上的shader效果~~ <a href="#note1" id="note1ref"><sup>1</sup></a>
+- 可能用的上的shader效果 <a href="#note1" id="note1ref"><sup>1</sup></a>
+  - [圆形裁剪](assets/common/res/materials/circle.mtl)(多用于头像显示)
+  - [水波特效](assets/common/res/materials/wave.mtl)（配合[组件](assets/common/scripts/effects/Wave.ts)）
 
 ### 通用UI组件
 
@@ -81,7 +83,7 @@ v **2.3.2**
 
 ### 说明
 
-<a id="note1" href="#note1ref"><sup>1</sup></a>因ccc的材质系统升级，已经失效，待适配新系统后再提供
+<a id="note1" href="#note1ref"><sup>1</sup></a>已全部适配新的正式材质系统
 
 ## 前端总结
 
