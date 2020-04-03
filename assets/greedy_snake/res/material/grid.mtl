@@ -1,0 +1,28 @@
+{
+  "__type__": "cc.Material",
+  "_name": "grid",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "5fd6e0a7-9d9e-4886-8e2d-77144e4961f6"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {
+        "USE_TEXTURE": true,
+        "USE_EFFECT": true
+      },
+      "props": {
+        "gridSize": {
+          "__type__": "cc.Vec2",
+          "x": 100,
+          "y": 100
+        },
+        "texture": {
+          "__uuid__": "98a17de1-600b-4944-9bd2-dd0b52a1e2a6"
+        }
+      }
+    }
+  }
+}
