@@ -352,20 +352,27 @@ export default class Utils {
             cc.v2(nd1.width, nd1.height),
             cc.v2(0, nd1.height)
         ];
+        let anc1 = cc.v2(nd1.width * nd1.anchorX, nd1.height * nd1.anchorY);
         let verteces2 = [
             cc.v2(0, 0),
             cc.v2(nd2.width, 0),
             cc.v2(nd2.width, nd2.height),
             cc.v2(0, nd2.height)
         ];
+        let anc2 = cc.v2(nd2.width * nd2.anchorX, nd2.height * nd2.anchorY);
 
         nd1.getWorldMatrix(Utils.transMatrix);
-        verteces1 = verteces1.map(each => each.transformMat4(Utils.transMatrix));
+        verteces1 = verteces1
+            .map(each => each.sub(anc1))
+            .map(each => cc.Vec2.transformMat4(cc.v2(), each, Utils.transMatrix));
 
         nd2.getWorldMatrix(Utils.transMatrix);
-        verteces2 = verteces2.map(each => each.transformMat4(Utils.transMatrix));
+        verteces2 = verteces2
+            .map(each => each.sub(anc2))
+            .map(each => cc.Vec2.transformMat4(cc.v2(), each, Utils.transMatrix));
 
         //* 使用polygonPolygon来计算相交
-        return cc.Intersection.polygonPolygon(verteces1, verteces2);
+        let interset = cc.Intersection.polygonPolygon(verteces1, verteces2);
+        return interset;
     }
 }

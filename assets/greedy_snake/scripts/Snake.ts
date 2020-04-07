@@ -2,10 +2,11 @@
  * @Author: Kinnon.Z
  * @Date: 2020-04-02 15:39:48
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-07 18:32:49
+ * @Last Modified time: 2020-04-07 22:20:40
  */
 
 import Segment, { ISegment, IInflectionPoint } from "./Segment";
+import Utils from "../../common/scripts/Utils";
 
 const { ccclass, property } = cc._decorator;
 export enum Part {
@@ -38,7 +39,7 @@ export default class Snake implements ISegment {
 
         //* chain all segments
         let lastTail = last._segment.tail;
-        const w = this._segment.node.getBoundingBox().width - 2;
+        const w = this._segment.node.getBoundingBox().width + 2;
         this._segment.node.parent = lastTail.node.parent;
         this._segment.node.position = lastTail.node.position.add(
             cc.v3(lastTail.dir.normalize()).mul(-w)
@@ -57,10 +58,20 @@ export default class Snake implements ISegment {
             cc.log("it's not a correct way to place a snake without head");
             return;
         }
+
         this._segment.node.parent = container;
         this._segment.node.position = cc.v3(pos);
         this._segment.dir = direction;
         this._adjust(direction);
+    }
+
+    public destroy() {
+        let next = this._segment.next;
+        this._segment.node.destroy();
+        while (next) {
+            next.node.destroy();
+            next = next.next;
+        }
     }
 
     public step(dt: number, dir?: cc.Vec2) {
@@ -106,6 +117,21 @@ export default class Snake implements ISegment {
         return this._segment.hitTest(ndbox);
     }
 
+    public hitBody() {
+        let cur = this._segment;
+        if (!this.next) {
+            return false;
+        }
+        let next = this.next._segment;
+        while (next) {
+            if (Utils.ifIntersect(cur.node, next.node)) {
+                return true;
+            }
+            next = next.next;
+        }
+        return false;
+    }
+
     // ? ===================================================================================
     // ? private interfaces
     // ? ===================================================================================
@@ -119,7 +145,7 @@ export default class Snake implements ISegment {
         let curr = last.next;
         let toV3 = cc.v3(forward).normalize();
         while (curr) {
-            let step = last.node.getBoundingBox().width - 2;
+            let step = last.node.getBoundingBox().width + 2;
             curr.node.parent = container;
             curr.node.position = last.node.position.add(toV3.mul(-step));
             curr.dir = last.dir;

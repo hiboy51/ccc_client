@@ -9,7 +9,7 @@ import Utils from "../../common/scripts/Utils";
  * @Author: Kinnon.Z
  * @Date: 2020-04-02 20:33:33
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-07 17:55:23
+ * @Last Modified time: 2020-04-07 21:14:39
  */
 const { ccclass, property } = cc._decorator;
 @ccclass
@@ -116,6 +116,11 @@ export default class SnakeGame extends cc.Component {
         }
 
         //* check if snake hit his tail
+        if (this._gameSnake.hitBody()) {
+            this._gameEnd = true;
+            this.nd_gameOver.active = true;
+            return;
+        }
 
         //* show food vice-window
         let foodPosInViewport = this._food.node.convertToWorldSpaceAR(cc.v2());
@@ -154,12 +159,17 @@ export default class SnakeGame extends cc.Component {
     public onBtnRetry() {
         this.nd_gameOver.active = false;
 
-        //* replace snake
+        //* rebuild snake
         const startPosToWorld = this.nd_snakeContainer.convertToNodeSpaceAR(this.startPos);
+        this._gameSnake.destroy();
+        this._gameSnake = this.comp_spawner.assembHead();
         this._gameSnake.place(this.nd_snakeContainer, startPosToWorld, this.startVelocity);
 
         //* replace food
         this._placeFood();
+
+        //* reset focus camera
+        this.camera_focus.reset();
 
         this._gameEnd = false;
     }

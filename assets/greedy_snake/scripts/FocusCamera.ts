@@ -2,7 +2,7 @@
  * @Author: Kinnon.Z
  * @Date: 2020-04-03 12:09:09
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-03 13:55:52
+ * @Last Modified time: 2020-04-07 20:59:43
  */
 const { ccclass, property } = cc._decorator;
 @ccclass
@@ -88,5 +88,9 @@ export default class FocusCamera extends cc.Component {
         cc.log(this._trans_v.x, this._trans_v.y);
         this.node.x += this._trans_v.x;
         this.node.y += this._trans_v.y;
+    }
+
+    public reset() {
+        this.node.position = cc.v3();
     }
 }
