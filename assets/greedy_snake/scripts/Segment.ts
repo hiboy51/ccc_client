@@ -2,7 +2,7 @@
  * @Author: Kinnon.Z
  * @Date: 2020-04-02 16:23:52
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-03 18:42:13
+ * @Last Modified time: 2020-04-07 20:16:29
  */
 const { ccclass, property } = cc._decorator;
 export interface ISegment {
@@ -20,6 +20,17 @@ export default class Segment extends cc.Component implements ISegment {
     private _next: Segment = null;
     private _velocity: cc.Vec2;
     private _reflectionPoint: IInflectionPoint[] = [];
+    private _originW: number;
+    //* 膨胀阶段（用于消除拐角误差）
+    private _expanding: boolean;
+    //* 膨胀步长
+    private _expandStep: number;
+    // ? ===================================================================================
+    // ? life cycle
+    // ? ===================================================================================
+    onLoad() {
+        this._originW = this.node.width;
+    }
     // ? ===================================================================================
     // ? implementaion
     // ? ===================================================================================
@@ -80,18 +91,49 @@ export default class Segment extends cc.Component implements ISegment {
                 this.node.y = position.y;
                 this._reflectionPoint.splice(0, 1);
                 this.conduct(this.snapshot());
-                let containErr = this._velocity.mul(err / this._velocity.mag());
+                //* 消除转角误差
+                let v = this._velocity.mag();
+                let containErr = this._velocity.mul(err / v);
                 this.node.x += containErr.x;
                 this.node.y += containErr.y;
+                if (err > 0) {
+                    this.node.width = Math.min(err / this.node.scaleX, this._originW);
+                } else {
+                    this.node.width = 0;
+                }
+                this._expanding = true;
+                this._expandStep = v * sec;
             } else {
                 //* 在到达拐点之前，继续按惯性移动
                 this.node.x += deltaDir.x;
                 this.node.y += deltaDir.y;
+
+                //* 膨胀算法， 消除拐角误差
+                if (this._expanding) {
+                    let w = this.node.width + this._expandStep;
+                    if (w >= this._originW) {
+                        this.node.width = this._originW;
+                        this._expanding = false;
+                    } else {
+                        this.node.width = w;
+                    }
+                }
             }
         } else {
             //* 按惯性移动
             this.node.x += deltaDir.x;
             this.node.y += deltaDir.y;
+
+            //* 膨胀算法， 消除拐角误差
+            if (this._expanding) {
+                let w = this.node.width + this._expandStep;
+                if (w >= this._originW) {
+                    this.node.width = this._originW;
+                    this._expanding = false;
+                } else {
+                    this.node.width = w;
+                }
+            }
         }
         if (this._next) {
             this._next.step(sec);
@@ -109,7 +151,7 @@ export default class Segment extends cc.Component implements ISegment {
         return { position, velocity };
     }
 
-    public hitTest(rect: cc.Rect) {
+    public hitTest(rect: cc.Rect, trans: boolean = true) {
         let box = this.node.getBoundingBox();
         if (box.intersects(rect)) {
             return true;

@@ -6,6 +6,7 @@ const { ccclass } = cc._decorator;
 @ccclass
 export default class Utils {
     private static dr: cc.Size;
+    private static transMatrix: cc.Mat4 = cc.mat4();
 
     public static resize() {
         let canvas = cc.find("Canvas").getComponent(cc.Canvas);
@@ -321,5 +322,50 @@ export default class Utils {
                 Utils.stopAllActionsRecursevely(child);
             });
         }
+    }
+
+    public static ifIntersect(nd1: cc.Node, nd2: cc.Node) {
+        function isNodeRotated(nd: cc.Node) {
+            let rotated = nd!.angle % 360 == 0;
+            if (rotated) {
+                return true;
+            }
+            const parent = nd.parent;
+            if (!parent) {
+                return false;
+            }
+            return isNodeRotated(parent);
+        }
+        let rotated1 = isNodeRotated(nd1);
+        let rotated2 = isNodeRotated(nd2);
+        //* 若双方都没有旋转，可以用rectRect来简化计算量
+        if (!rotated1 && !rotated2) {
+            const boxWorld1 = nd1.getBoundingBoxToWorld();
+            const boxWorld2 = nd2.getBoundingBoxToWorld();
+            return cc.Intersection.rectRect(boxWorld1, boxWorld2);
+        }
+
+        //* 世界坐标下的顶点坐标
+        let verteces1 = [
+            cc.v2(0, 0),
+            cc.v2(nd1.width, 0),
+            cc.v2(nd1.width, nd1.height),
+            cc.v2(0, nd1.height)
+        ];
+        let verteces2 = [
+            cc.v2(0, 0),
+            cc.v2(nd2.width, 0),
+            cc.v2(nd2.width, nd2.height),
+            cc.v2(0, nd2.height)
+        ];
+
+        nd1.getWorldMatrix(Utils.transMatrix);
+        verteces1 = verteces1.map(each => each.transformMat4(Utils.transMatrix));
+
+        nd2.getWorldMatrix(Utils.transMatrix);
+        verteces2 = verteces2.map(each => each.transformMat4(Utils.transMatrix));
+
+        //* 使用polygonPolygon来计算相交
+        return cc.Intersection.polygonPolygon(verteces1, verteces2);
     }
 }

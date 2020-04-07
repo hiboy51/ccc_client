@@ -2,7 +2,7 @@
  * @Author: Kinnon.Z
  * @Date: 2020-04-02 15:39:48
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-03 18:42:33
+ * @Last Modified time: 2020-04-07 18:32:49
  */
 
 import Segment, { ISegment, IInflectionPoint } from "./Segment";
@@ -38,6 +38,11 @@ export default class Snake implements ISegment {
 
         //* chain all segments
         let lastTail = last._segment.tail;
+        const w = this._segment.node.getBoundingBox().width - 2;
+        this._segment.node.parent = lastTail.node.parent;
+        this._segment.node.position = lastTail.node.position.add(
+            cc.v3(lastTail.dir.normalize()).mul(-w)
+        );
         this._segment.appendTo(lastTail);
         this._adjust(lastTail.dir);
 
@@ -78,6 +83,20 @@ export default class Snake implements ISegment {
         return this._segment.node.convertToWorldSpaceAR(cc.v2());
     }
 
+    public get head() {
+        if (this._type == Part.BODY) {
+            return null;
+        }
+        return this._segment;
+    }
+
+    public get tail() {
+        if (!this._next) {
+            return this;
+        }
+        return this._next.tail;
+    }
+
     public getHeadDir() {
         return this._segment.dir;
     }
@@ -100,7 +119,7 @@ export default class Snake implements ISegment {
         let curr = last.next;
         let toV3 = cc.v3(forward).normalize();
         while (curr) {
-            let step = last.node.getBoundingBox().width + 2;
+            let step = last.node.getBoundingBox().width - 2;
             curr.node.parent = container;
             curr.node.position = last.node.position.add(toV3.mul(-step));
             curr.dir = last.dir;
