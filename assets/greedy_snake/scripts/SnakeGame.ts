@@ -9,7 +9,7 @@ import Utils from "../../common/scripts/Utils";
  * @Author: Kinnon.Z
  * @Date: 2020-04-02 20:33:33
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-04-07 21:14:39
+ * @Last Modified time: 2020-04-08 16:25:16
  */
 const { ccclass, property } = cc._decorator;
 @ccclass
@@ -102,7 +102,7 @@ export default class SnakeGame extends cc.Component {
 
         //* camera follow
         let snakePosWorld = this._gameSnake.getHeadWorldPos();
-        this.camera_focus.follow(snakePosWorld, this._gameSnake.getHeadDir());
+        this.camera_focus.follow(snakePosWorld, this._gameSnake.getHeadDir().mul(dt));
 
         //* check if snake hit a food
         if (Utils.ifIntersect(this._gameSnake.head.node, this._food.node)) {
@@ -175,6 +175,6 @@ export default class SnakeGame extends cc.Component {
     }
 
     public onBtnExit() {
-        cc.director.end();
+        cc.game.end();
     }
 }
