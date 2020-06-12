@@ -1,31 +1,16 @@
 import PopupBase from "./PopupBase";
 
-const {ccclass, property} = cc._decorator;
-
-function indexProxy(clazz: any) {
-    return new Proxy(clazz, {
-        get: (target, name)=>{
-            let field = name in clazz ? target[name] : target.instance[name]
-            return field || function(){
-                cc.log(`* Try to index a non-existed field: ${String(name)}; \
-                * Maybe it has been deleted when PopupManager destroyed while scene changing \
-                * Or no prefab named ${String(name)} registered on PopupManager`);
-            };
-        }
-    });
-}
-
-
+const { ccclass, property } = cc._decorator;
 @ccclass
 class PopupManager extends cc.Component {
     @property({
         displayName: "模态弹窗预制体",
-        type: [cc.Prefab]
+        type: [cc.Prefab],
     })
     prefab_array: cc.Prefab[] = [];
 
     @property({
-        type: cc.Node
+        type: cc.Node,
     })
     nd_root: cc.Node = null;
 
@@ -76,15 +61,18 @@ class PopupManager extends cc.Component {
     private initiate() {
         console.assert(!!this.nd_root, "a node as nd_root must be specified for the 'PopupManager");
 
-        this.prefab_array.forEach(each => {
+        this.prefab_array.forEach((each) => {
             let data = each.data;
             let compPopup = data.getComponent("PopupBase") as PopupBase;
             console.assert(!!compPopup, "Every popup must extend from 'Popup'");
-            console.assert(compPopup.popupName != "", "Every popup must be specified a non-empty name");
+            console.assert(
+                compPopup.popupName != "",
+                "Every popup must be specified a non-empty name"
+            );
 
             let showFuncName = (compPopup.popupName as string)
                 .split("")
-                .map((each, idx) => idx == 0 ? each.toUpperCase() : each)
+                .map((each, idx) => (idx == 0 ? each.toUpperCase() : each))
                 .join("");
             let closeFuncName = `$${showFuncName}`;
 
@@ -93,8 +81,7 @@ class PopupManager extends cc.Component {
                 let nd: cc.Node;
                 if (comp) {
                     nd = comp.node;
-                }
-                else {
+                } else {
                     nd = cc.instantiate(each);
                     comp = nd.getComponent("PopupBase");
                     this._popupPool[showFuncName] = comp;
@@ -102,19 +89,49 @@ class PopupManager extends cc.Component {
                 comp.setData.apply(comp, args);
                 nd.parent = this.nd_root;
                 return comp;
-            }
+            };
 
-            this[closeFuncName] = ()=>{
+            this[closeFuncName] = () => {
                 let k = showFuncName;
-                
+
                 if (this._popupPool[k]) {
                     let comp = this._popupPool[k] as PopupBase;
                     if (comp.node.parent) {
                         comp.dispose();
                     }
                 }
-            }
+            };
         });
     }
 }
+
+// ? ===================================================================================
+// ? 注册Popup，以便使用时可以有正确的语法检查
+// ? ===================================================================================
+namespace PopupManager {
+    // * Tips Popup
+    export declare function Tips(...args: any[]): PopupBase;
+    export declare function $Tips(...args: any[]): void;
+
+    // * Waiting Popup
+    export declare function Waiting(...args: any[]): PopupBase;
+    export declare function $Waiting(...args: any[]): void;
+}
+
+function indexProxy(clazz: typeof PopupManager) {
+    return new Proxy(clazz, {
+        get: (target, name) => {
+            let field = name in clazz ? target[name] : target.instance[name];
+            return (
+                field ||
+                function () {
+                    cc.log(`* Try to index a non-existed field: ${String(name)}; \
+                * Maybe it has been deleted when PopupManager destroyed while scene changing \
+                * Or no prefab named ${String(name)} registered on PopupManager`);
+                }
+            );
+        },
+    });
+}
+
 export default indexProxy(PopupManager);

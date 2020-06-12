@@ -1,12 +1,12 @@
 import PopupManager from "./PopupManager";
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 export enum UIAnimationStyle {
     None,
     UP_DOWN,
     ZOOM,
-    Custom
+    Custom,
 }
 export interface IUIAnimation {
     style: UIAnimationStyle;
@@ -44,15 +44,17 @@ class PopupUIAnimationUpDown implements IUIAnimation {
 
     public runAnimationOut(popup: cc.Component) {
         let pp = popup as PopupBase;
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (pp.nd_backlayer) {
                 pp.nd_backlayer.runAction(cc.sequence(cc.delayTime(0.3), cc.fadeOut(0.15)));
             }
-            pp.nd_board.runAction(cc.sequence(
-                cc.moveTo(0.6, cc.v2(0, 500)).easing(cc.easeBounceIn()),
-                cc.callFunc(resolve)
-            ));
-        })
+            pp.nd_board.runAction(
+                cc.sequence(
+                    cc.moveTo(0.6, cc.v2(0, 500)).easing(cc.easeBounceIn()),
+                    cc.callFunc(resolve)
+                )
+            );
+        });
     }
 }
 
@@ -73,40 +75,39 @@ class PopupUIAnimationZoom implements IUIAnimation {
 
     public runAnimationOut(popup: cc.Component) {
         let pp = popup as PopupBase;
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (pp.nd_backlayer) {
                 pp.nd_backlayer.runAction(cc.fadeOut(0.15));
             }
-            pp.nd_board.runAction(cc.sequence(
-                cc.spawn(cc.scaleTo(0.15, 0.1), cc.fadeOut(0.15)),
-                cc.callFunc(resolve)
-            ));
-        })
+            pp.nd_board.runAction(
+                cc.sequence(cc.spawn(cc.scaleTo(0.15, 0.1), cc.fadeOut(0.15)), cc.callFunc(resolve))
+            );
+        });
     }
 }
 
 @ccclass
 export default class PopupBase extends cc.Component {
     @property
-    popupName:string = "";
+    popupName: string = "";
 
     @property({
-        type: cc.Node
+        type: cc.Node,
     })
     nd_backlayer: cc.Node = null;
 
     @property({
-        type: cc.Node
+        type: cc.Node,
     })
     nd_board: cc.Node = null;
 
     @property({
-        displayName: "是否缓存（关闭时不会销毁）"
+        displayName: "是否缓存（关闭时不会销毁）",
     })
     cached: boolean = false;
 
     @property({
-        type: cc.Enum(UIAnimationStyle)
+        type: cc.Enum(UIAnimationStyle),
     })
     enum_aniStyle: UIAnimationStyle = UIAnimationStyle.UP_DOWN;
 
@@ -141,11 +142,11 @@ export default class PopupBase extends cc.Component {
         this._listUIAnim = [
             new PopupUIAnimationNone(),
             new PopupUIAnimationUpDown(),
-            new PopupUIAnimationZoom()
+            new PopupUIAnimationZoom(),
         ];
         cc.log(`new popup instance named ${this.popupName} has been created`);
     }
-    
+
     async onEnable() {
         await this.uiAnim.runAnimationIn(this);
         if (!this._uiPrepared) {
@@ -158,14 +159,14 @@ export default class PopupBase extends cc.Component {
         cc.log(`popup instance named ${this.popupName} has been destroyed`);
         PopupManager.instance && PopupManager.instance.remove(this, true);
     }
-    
+
     // ==========================================================================================
     // protected interfaces
     // ==========================================================================================
-    
+
     /** 获取当前UI动画 */
     protected get uiAnim() {
-        let find = this._listUIAnim.find(each => each.style == this.enum_aniStyle);
+        let find = this._listUIAnim.find((each) => each.style == this.enum_aniStyle);
         return find || this.getCustomAnim();
     }
 
@@ -173,7 +174,5 @@ export default class PopupBase extends cc.Component {
         return new PopupUIAnimationNone();
     }
 
-    protected _initView() {
-
-    }
+    protected _initView() {}
 }
