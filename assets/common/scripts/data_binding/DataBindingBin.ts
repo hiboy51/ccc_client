@@ -2,7 +2,11 @@
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 14:54:18
  * @Last Modified by: Kinnon.Z
+<<<<<<< HEAD
  * @Last Modified time: 2020-08-13 11:58:32
+=======
+ * @Last Modified time: 2020-08-13 11:52:27
+>>>>>>> 190d011876d2e35d433820f2484802bef1da6944
  */
 
 /* 用法参考
@@ -132,14 +136,24 @@ export function register(prototype: any, funcName: string, desc: PropertyDescrip
  * 用于标记一个绑定监听
  * ! 不能使用箭头函数, 因为箭头函数的this不能改变
  * @param ownerProvider 返回数据对象的闭包
+<<<<<<< HEAD
  * @param setterName setter名字
  */
 export function listen(ownerProvider: () => any, setterName: string) {
+=======
+ * @param fieldName 字段名称
+ */
+export function listen(ownerProvider: () => any, fieldName: string) {
+>>>>>>> 190d011876d2e35d433820f2484802bef1da6944
     return function (prototype: any, handlerName: string, desc: PropertyDescriptor) {
         prototype.db_listeners = prototype.db_listeners || [];
         let profile: RegisterProfile = {
             provider: ownerProvider,
+<<<<<<< HEAD
             fieldName: setterName,
+=======
+            fieldName,
+>>>>>>> 190d011876d2e35d433820f2484802bef1da6944
             listenerName: handlerName,
         };
         prototype.db_listeners.push(profile);
