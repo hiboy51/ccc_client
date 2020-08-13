@@ -2,7 +2,7 @@ import PopupBase from "./PopupBase";
 
 const { ccclass, property } = cc._decorator;
 @ccclass
-class PopupManager extends cc.Component {
+export class PopupManager extends cc.Component {
     @property({
         displayName: "模态弹窗预制体",
         type: [cc.Prefab],
@@ -103,23 +103,6 @@ class PopupManager extends cc.Component {
             };
         });
     }
-}
-
-// ? ===================================================================================
-// ? 注册Popup，以便使用时可以有正确的语法检查
-// ? ===================================================================================
-namespace PopupManager {
-    // * Tips Popup
-    export declare function Tips(...args: any[]): PopupBase;
-    export declare function $Tips(...args: any[]): void;
-
-    // * Waiting Popup
-    export declare function Waiting(...args: any[]): PopupBase;
-    export declare function $Waiting(...args: any[]): void;
-
-    //* MsgBox
-    export declare function MsgBox(...args: any[]): PopupBase;
-    export declare function $MsgBox(...args: any[]): void;
 }
 
 function indexProxy(clazz: typeof PopupManager) {
