@@ -11,7 +11,7 @@ import {
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 17:22:26
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 11:49:54
+ * @Last Modified time: 2020-08-13 15:47:42
  */
 const { ccclass, property } = cc._decorator;
 @ccclass

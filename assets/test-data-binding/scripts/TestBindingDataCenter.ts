@@ -2,11 +2,11 @@
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 16:53:13
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 11:13:18
+ * @Last Modified time: 2020-08-13 15:17:05
  */
 
 import { injectable } from "../../common/scripts/DI/DI";
-import { binding } from "../../common/scripts/data_binding/DataBindingBin";
+import { bind } from "../../common/scripts/data_binding/DataBindingBin";
 
 @injectable({
     factory: () => TestBindingDataCenter.get(),
@@ -18,7 +18,7 @@ export default class TestBindingDataCenter {
     }
     private _setterValue: string = "";
 
-    @binding
+    @bind
     public set setterValue(v: string) {
         this._setterValue = v;
     }
@@ -31,13 +31,13 @@ export default class TestBindingDataCenter {
     public get member() {
         return this._member;
     }
-    @binding
+    @bind
     public set member(b: boolean) {
         this._member = b;
     }
 
     _deferValue = 100;
-    @binding(true)
+    @bind(true)
     public set deferValue(n: number) {
         this._deferValue = n;
     }
@@ -49,7 +49,7 @@ export default class TestBindingDataCenter {
     public set listValue(l: number[]) {
         this._listValue = l;
     }
-    @binding
+    @bind
     public get listValue() {
         return this._listValue;
     }

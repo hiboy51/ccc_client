@@ -2,7 +2,7 @@
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 14:54:18
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 14:43:51
+ * @Last Modified time: 2020-08-13 15:24:43
  */
 
 /* 用法参考
@@ -13,12 +13,12 @@ Class DataSource {
    /* 
 
   _field: number = 1;
-   @binding /* 默认绑定，数据改变立即广播
+   @bind /* 默认绑定，数据改变立即广播
    public set field(n: number) {this._field = n;}
    public get field() {return this._field;}
 
    _property: string = "abc";
-   @binding(true) /* 延迟绑定。数据改变后在下一帧广播,适用于高频改变的数据。（需逐帧执行step方法）
+   @bind(true) /* 延迟绑定。数据改变后在下一帧广播,适用于高频改变的数据。（需逐帧执行step方法）
    public set property(s: string) {this._property = s;}
    public get property() {return this._property;}
 }
@@ -59,13 +59,9 @@ class Context extends cc.Component {
  * @param fieldName
  * @param defer 是否延迟到下一帧执行。对于频繁变化的数据可以降低广播的频率
  */
-export function binding(defer: boolean): Function;
-export function binding(prototype: object, fieldName: string, desc: PropertyDescriptor): void;
-export function binding(
-    prototype: object | boolean,
-    fieldName?: string,
-    desc?: PropertyDescriptor
-) {
+export function bind(defer: boolean): Function;
+export function bind(prototype: object, fieldName: string, desc: PropertyDescriptor): void;
+export function bind(prototype: object | boolean, fieldName?: string, desc?: PropertyDescriptor) {
     if (typeof prototype == "boolean") {
         return function (o: object, f: string, desc: PropertyDescriptor) {
             _binding(o, f, desc, prototype);
@@ -102,6 +98,11 @@ function _binding(
     };
 }
 
+type RegisterProfile = {
+    provider: any;
+    fieldName: string;
+    listenerName: string;
+};
 /**
  * 显式注册该对象下的所有绑定监听
  * ! 因为只有在方法运行时才能拿到真正的this对象。所以无法绕过在运行时显式调用注册
@@ -109,11 +110,6 @@ function _binding(
  * @param funcName
  * @param desc
  */
-type RegisterProfile = {
-    provider: any;
-    fieldName: string;
-    listenerName: string;
-};
 export function register(prototype: any, funcName: string, desc: PropertyDescriptor) {
     let originalFunc = desc.value;
     desc.value = function (...args: any[]) {
@@ -171,8 +167,8 @@ type BindingProfile = {
     handler: Function;
 };
 
-type DeferDescribe = { owner: any; fieldName: string };
-type DataSource = any;
+type DeferDescribe = { owner: object; fieldName: string };
+type DataSource = object;
 type FieldName = string;
 export class DataBindingBin {
     private static _ins: DataBindingBin = new DataBindingBin();
@@ -200,7 +196,7 @@ export class DataBindingBin {
     // ? ===================================================================================
     // ? public interfaces
     // ? ===================================================================================
-    public defer(owner: any, fieldName: string) {
+    public defer(owner: object, fieldName: string) {
         let exist = this._deferList.find((each) => {
             let { owner: o, fieldName: n } = each;
             return o == owner && n == fieldName;
@@ -210,7 +206,7 @@ export class DataBindingBin {
         }
     }
 
-    public unBindAllForTarget(target: any) {
+    public unBindAllForTarget(target: object) {
         for (let [, value] of this._bindMap) {
             for (let [, profile] of value) {
                 let len = profile.length;
@@ -224,7 +220,7 @@ export class DataBindingBin {
         }
     }
 
-    public bind(dataOwner: any, fieldName: string, listener: any, handler: Function) {
+    public bind(dataOwner: object, fieldName: string, listener: object, handler: Function) {
         let map = this._bindMap.get(dataOwner);
         if (!map) {
             let genMap = new Map<FieldName, BindingProfile[]>();
@@ -246,7 +242,7 @@ export class DataBindingBin {
         }
     }
 
-    public notify(dataOwner: any, fieldName: string, newValue: any) {
+    public notify(dataOwner: object, fieldName: string, newValue: any) {
         let map = this._bindMap.get(dataOwner);
         if (!map) {
             return;
