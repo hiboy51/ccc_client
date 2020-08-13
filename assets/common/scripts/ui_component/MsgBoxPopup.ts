@@ -10,7 +10,7 @@ import PopupBase from "../popup_manager/PopupBase";
  */
 const { ccclass, property } = cc._decorator;
 
-type MsgBoxOption = {
+export type MsgBoxOption = {
     optionCode: number; // 0 ok, 1 cancel
     onClick?: () => void; // 按钮事件
     name?: string; // 按钮文字
@@ -76,7 +76,7 @@ export default class MsgBoxPopup extends PopupBase {
         }
 
         if (Array.isArray(this._options)) {
-            return this._options.find(each => each.optionCode == optionCode);
+            return this._options.find((each) => each.optionCode == optionCode);
         }
 
         return this._options.optionCode == optionCode ? this._options : null;
