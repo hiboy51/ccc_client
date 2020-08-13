@@ -3,13 +3,12 @@ import Net from "./Net";
 import { GlobalDataCenter } from "../GlobalDataCenter";
 import ProjectConfigs from "../ProjectConfigs";
 import {
-    NetStateClosed,
     NetState,
     NetStateEnum,
     NetStateConnecting,
     NetStateConnected,
     NetStateClosing,
-    NetStateReconnect
+    NetStateReconnect,
 } from "./NetState";
 import SYEventManager from "../SYEventManager";
 import { CustomEventDefine } from "../ProjectEvents/CustomEventDefine";
@@ -17,9 +16,7 @@ import PM from "../popup_manager/PopupManager";
 import { ServeOutEventDefine } from "../ProjectEvents/ServeOutEventDefine";
 import { performAsyncWithErrorCatch } from "../Flow";
 import { fetchable } from "../protocol_dispatch/ProtocolConfig";
-import Utils from "../Utils";
 import { injectable } from "../DI/DI";
-import { async } from "q";
 
 /*
  * Filename: /Users/kinnonzhang/SY01/assets/common/scripts/net/NetStateMachine.ts
@@ -33,7 +30,7 @@ import { async } from "q";
 const { ccclass } = cc._decorator;
 @ccclass
 @injectable({
-    factory: () => NetStateMachine.get()
+    factory: () => NetStateMachine.get(),
 })
 export default class NetStateMachine extends StateMachine {
     private static _ins: NetStateMachine = null;
@@ -115,7 +112,7 @@ export default class NetStateMachine extends StateMachine {
                 (this.curState as NetStateConnected).sendMsg(code, msg);
 
                 let timeOut = setTimeout(() => {
-                    let fetch = this._fetchList.find(each => each.serialId == serialId);
+                    let fetch = this._fetchList.find((each) => each.serialId == serialId);
                     if (fetch) {
                         clearTimeout(fetch.timeOut);
                         let idx = this._fetchList.indexOf(fetch);
@@ -135,9 +132,9 @@ export default class NetStateMachine extends StateMachine {
     public ejectFetch(codeOrSerialId: string | number) {
         let predicate: (item: any, idx: number, arr: any[]) => boolean;
         if (typeof codeOrSerialId == "string") {
-            predicate = each => each.code == codeOrSerialId;
+            predicate = (each) => each.code == codeOrSerialId;
         } else if (typeof codeOrSerialId == "number") {
-            predicate = each => each.serialId == codeOrSerialId;
+            predicate = (each) => each.serialId == codeOrSerialId;
         }
         let fetch = this._fetchList.find(predicate);
         if (fetch) {
@@ -162,7 +159,7 @@ export default class NetStateMachine extends StateMachine {
     public async waitRedirectIfNecessary() {
         let fuc = () => {
             if (this.currentStateEnum == NetStateEnum.Redirecting) {
-                return new Promise(resolve => (this._waitRedirectResolve = resolve));
+                return new Promise((resolve) => (this._waitRedirectResolve = resolve));
             }
             if (this.currentStateEnum == NetStateEnum.Connected) {
                 return Promise.resolve(true);
@@ -202,7 +199,7 @@ export default class NetStateMachine extends StateMachine {
         PM.Waiting("正在连接网络", 30);
     }
 
-    public onNoti_ce_network_open(prestate: NetStateEnum, url: string) {
+    public onNoti_ce_network_open(prestate: NetStateEnum) {
         PM.$Tips();
         PM.$Waiting();
         if (prestate == NetStateEnum.Reconnect) {
@@ -216,7 +213,7 @@ export default class NetStateMachine extends StateMachine {
                     roomId: gCenter.currentRoomId,
                     field: gCenter.currentField,
                     pAccount: gCenter.agencyAccount,
-                    agent: gCenter.agencyId
+                    agent: gCenter.agencyId,
                 });
             }
         } else if (prestate == NetStateEnum.Redirecting) {
@@ -225,7 +222,7 @@ export default class NetStateMachine extends StateMachine {
         }
     }
 
-    public onNoti_ce_network_reconnect(count: number, url: string) {
+    public onNoti_ce_network_reconnect(count: number) {
         PM.$Waiting();
         PM.Tips(`检测到网络不可用，正在努力连接(第${count}次)...`, 30, true);
     }
@@ -239,14 +236,14 @@ export default class NetStateMachine extends StateMachine {
                 let optionOk = {
                     optionCode: 0,
                     name: "重连",
-                    onClick: () => this.changeState(new NetStateReconnect(this))
+                    onClick: () => this.changeState(new NetStateReconnect(this)),
                 };
                 PM.MsgBox("网络无法连接, 是否重试?", optionOk);
             } else if (prestate == NetStateEnum.Connected) {
                 let optionOk = {
                     optionCode: 0,
                     name: "连接",
-                    onClick: () => this.changeState(new NetStateReconnect(this))
+                    onClick: () => this.changeState(new NetStateReconnect(this)),
                 };
                 PM.MsgBox("网络已断开, 是否尝试连接?", optionOk);
             } else if (prestate == NetStateEnum.Redirecting) {
@@ -254,7 +251,7 @@ export default class NetStateMachine extends StateMachine {
                 let optionOk = {
                     optionCode: 0,
                     name: "连接",
-                    onClick: () => this.changeState(new NetStateReconnect(this))
+                    onClick: () => this.changeState(new NetStateReconnect(this)),
                 };
                 PM.MsgBox("网络重定向失败, 请尝试重连?", optionOk);
             }

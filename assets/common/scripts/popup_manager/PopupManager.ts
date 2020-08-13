@@ -116,6 +116,10 @@ namespace PopupManager {
     // * Waiting Popup
     export declare function Waiting(...args: any[]): PopupBase;
     export declare function $Waiting(...args: any[]): void;
+
+    //* MsgBox
+    export declare function MsgBox(...args: any[]): PopupBase;
+    export declare function $MsgBox(...args: any[]): void;
 }
 
 function indexProxy(clazz: typeof PopupManager) {

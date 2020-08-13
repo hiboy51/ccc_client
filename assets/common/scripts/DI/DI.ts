@@ -2,7 +2,7 @@
  * File: DI.ts
  * File Created: Tuesday, 10th December 2019 2:00:24 pm
  * Author: Kinnon.Z
- * Summary: 
+ * Summary:
  *    A very simple implementation of [Dependency Inject] system.
  * -----
  * Last Modified: Tuesday, 10th December 2019 3:46:04 pm
@@ -19,8 +19,8 @@ export function funcName(f: Function) {
 // ====================================================================================
 // decorators
 // ====================================================================================
-export function inject<T extends {new(): {}}>(constructor: T) {
-return (obj: any, propName: string) => {
+export function inject<T extends { new (): {} }>(constructor: T) {
+    return (obj: any, propName: string) => {
         let prop = obj[propName];
         if (prop) {
             return;
@@ -28,26 +28,24 @@ return (obj: any, propName: string) => {
         let service = Injector.get().getAvailableService(constructor);
         if (service) {
             obj[propName] = service;
-        }
-        else {
+        } else {
             throw new Error(`service ${funcName(constructor)} not registered`);
         }
-    }
+    };
 }
 
 interface Injectable {
     factory: () => Object;
 }
 export function injectable(meta: Injectable): Function;
-export function injectable<T extends {new(): {}}>(constructor: T): void;
-export function injectable<T extends {new(): {}}>(args: T | Injectable) {
+export function injectable<T extends { new (): {} }>(constructor: T): void;
+export function injectable<T extends { new (): {} }>(args: T | Injectable) {
     if (typeof args == "function") {
-        Injector.get().registerSerivce(args);
-    }
-    else {
+        Injector.get().registerService(args);
+    } else {
         return (constructor: T) => {
-            Injector.get().registerSerivce(constructor, args.factory);
-        }
+            Injector.get().registerService(constructor, args.factory);
+        };
     }
 }
 
@@ -55,14 +53,14 @@ export function injectable<T extends {new(): {}}>(args: T | Injectable) {
 // injector
 // ====================================================================================
 export class Injector {
-    private static inst: Injector = new Injector;
+    private static inst: Injector = new Injector();
     private _cache: Map<Function, object> = new Map<Function, object>();
-    
+
     public static get(): Injector {
         return Injector.inst;
     }
 
-    public registerSerivce<T extends {new():{}}>(cons: T, factory?: ()=>any) {
+    public registerService<T extends { new (): {} }>(cons: T, factory?: () => any) {
         let inst = this._cache.get(cons);
         if (inst) {
             return;
@@ -70,26 +68,24 @@ export class Injector {
         if (factory) {
             inst = factory();
             inst && this._cache.set(cons, inst);
-        }
-        else {
+        } else {
             inst = new cons();
             this._cache.set(cons, inst);
         }
     }
 
-    public getAvailableService<T extends {new():{}}>(cons: T) {
+    public getAvailableService<T extends { new (): {} }>(cons: T) {
         let inst = this._cache.get(cons);
         return inst;
     }
-    
-    public unregisterService<T extends {new():{}}>(cons: T): void;
-    public unregisterService<T extends {new():{}}>(cons: T[]): void;
-    public unregisterService<T extends {new():{}}>(cons: T | T[]) {
+
+    public unregisterService<T extends { new (): {} }>(cons: T): void;
+    public unregisterService<T extends { new (): {} }>(cons: T[]): void;
+    public unregisterService<T extends { new (): {} }>(cons: T | T[]) {
         if (Array.isArray(cons)) {
             cons = cons.filter((each, index, arr) => index == arr.indexOf(each));
-            cons.forEach(each => this._cache.delete(each));
-        }
-        else {
+            cons.forEach((each) => this._cache.delete(each));
+        } else {
             this._cache.delete(cons);
         }
     }
