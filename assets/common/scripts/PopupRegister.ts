@@ -1,4 +1,3 @@
-import { PopupManager } from "./popup_manager/PopupManager";
 import PopupBase from "./popup_manager/PopupBase";
 import { MsgBoxOption } from "./ui_component/MsgBoxPopup";
 
