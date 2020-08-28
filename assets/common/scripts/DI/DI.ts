@@ -9,6 +9,10 @@
  * Modified By: Kinnon.Z
  */
 
+import "reflect-metadata";
+
+const BaseType = [Object, String, Number, Array];
+
 // ====================================================================================
 // extra function name
 // ====================================================================================
@@ -19,33 +23,45 @@ export function funcName(f: Function) {
 // ====================================================================================
 // decorators
 // ====================================================================================
-export function inject<T extends { new (): {} }>(constructor: T) {
-    return (obj: any, propName: string) => {
-        let prop = obj[propName];
-        if (prop) {
-            return;
-        }
-        let service = Injector.get().getAvailableService(constructor);
-        if (service) {
-            obj[propName] = service;
-        } else {
-            throw new Error(`service ${funcName(constructor)} not registered`);
-        }
-    };
+export function inject(proto: Object, propName: string): void {
+    let ctor = Reflect.getMetadata("design:type", proto, propName);
+    if (BaseType.find((each) => each == ctor)) {
+        return;
+    }
+    let service = Injector.get().getAvailableService(ctor);
+    if (service) {
+        proto[propName] = service;
+    } else {
+        throw new Error(`service ${funcName(ctor)} not registered`);
+    }
+}
+interface Injectable<T> {
+    factory?: () => T;
+    share?: boolean;
 }
 
-interface Injectable {
-    factory: () => Object;
+interface Constructor<T> {
+    new (...args: any[]): T;
 }
-export function injectable(meta: Injectable): Function;
-export function injectable<T extends { new (): {} }>(constructor: T): void;
-export function injectable<T extends { new (): {} }>(args: T | Injectable) {
-    if (typeof args == "function") {
-        Injector.get().registerService(args);
-    } else {
-        return (constructor: T) => {
-            Injector.get().registerService(constructor, args.factory);
+
+export function injectable<T>(ctor: Constructor<T>): void;
+export function injectable<T>(conf: Injectable<T>): (ctor: Constructor<T>) => void;
+export function injectable<T>(share: boolean): (ctor: Constructor<T>) => void;
+export function injectable<T>(arg: boolean | Constructor<T> | Injectable<T>) {
+    if (typeof arg == "boolean") {
+        return function (ctor: Constructor<T>) {
+            Injector.get().registerService(ctor, { share: arg });
         };
+    } else if (typeof arg == "object") {
+        return function (ctor: Constructor<T>) {
+            arg.share = arg.share || true;
+            Injector.get().registerService(ctor, arg);
+        };
+    } else {
+        cc.log(arg.name);
+        let params = Reflect.getMetadata("design:paramtypes", arg);
+        cc.log(params);
+        Injector.get().registerService(arg, { share: true });
     }
 }
 
@@ -54,38 +70,55 @@ export function injectable<T extends { new (): {} }>(args: T | Injectable) {
 // ====================================================================================
 export class Injector {
     private static inst: Injector = new Injector();
-    private _cache: Map<Function, object> = new Map<Function, object>();
+    private _cache = new Map();
+    private _injectable = new Map();
 
     public static get(): Injector {
         return Injector.inst;
     }
 
-    public registerService<T extends { new (): {} }>(cons: T, factory?: () => any) {
-        let inst = this._cache.get(cons);
-        if (inst) {
-            return;
-        }
-        if (factory) {
-            inst = factory();
-            inst && this._cache.set(cons, inst);
-        } else {
-            inst = new cons();
-            this._cache.set(cons, inst);
-        }
+    public registerService<T>(ctor: Constructor<T>, conf: Injectable<T>) {
+        conf.share = !!conf.share;
+        conf.factory =
+            conf.factory ||
+            (() => {
+                let params = Reflect.getMetadata("design:paramtypes", ctor) || [];
+                params = params.map((each) => {
+                    this.getAvailableService(each);
+                });
+                return new ctor(...params);
+            });
+        this._injectable.set(ctor, conf);
     }
 
-    public getAvailableService<T extends { new (): {} }>(cons: T) {
+    public getAvailableService<T>(cons: Constructor<T>): T {
+        let conf = this._injectable.get(cons);
+        if (!conf) {
+            return;
+        }
+        let share = conf.share;
+        if (!share) {
+            return conf.factory();
+        }
         let inst = this._cache.get(cons);
+        if (!inst) {
+            inst = conf.factory();
+            this._cache.set(cons, inst);
+        }
         return inst;
     }
 
-    public unregisterService<T extends { new (): {} }>(cons: T): void;
-    public unregisterService<T extends { new (): {} }>(cons: T[]): void;
-    public unregisterService<T extends { new (): {} }>(cons: T | T[]) {
+    public unregisterService<T>(cons: Constructor<T>): void;
+    public unregisterService<T>(cons: Constructor<T>[]): void;
+    public unregisterService<T>(cons: Constructor<T> | Constructor<T>[]) {
         if (Array.isArray(cons)) {
             cons = cons.filter((each, index, arr) => index == arr.indexOf(each));
-            cons.forEach((each) => this._cache.delete(each));
+            cons.forEach((each) => {
+                this._cache.delete(each);
+                this._injectable.delete(each);
+            });
         } else {
+            this._injectable.delete(cons);
             this._cache.delete(cons);
         }
     }

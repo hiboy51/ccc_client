@@ -2,20 +2,14 @@
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 16:53:13
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 15:17:05
+ * @Last Modified time: 2020-08-28 18:54:04
  */
 
 import { injectable } from "../../common/scripts/DI/DI";
 import { bind } from "../../common/scripts/data_binding/DataBindingBin";
 
-@injectable({
-    factory: () => TestBindingDataCenter.get(),
-})
+@injectable
 export default class TestBindingDataCenter {
-    private static _ins = new TestBindingDataCenter();
-    public static get() {
-        return TestBindingDataCenter._ins;
-    }
     private _setterValue: string = "";
 
     @bind

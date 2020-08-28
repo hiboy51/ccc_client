@@ -11,12 +11,12 @@ import {
  * @Author: Kinnon.Z
  * @Date: 2020-08-12 17:22:26
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 15:47:42
+ * @Last Modified time: 2020-08-28 18:51:15
  */
 const { ccclass, property } = cc._decorator;
 @ccclass
 export default class TestBindingDataDriver extends cc.Component {
-    @inject(TestBindingDataCenter)
+    @inject
     private _dataCenter: TestBindingDataCenter;
 
     // ? ===================================================================================

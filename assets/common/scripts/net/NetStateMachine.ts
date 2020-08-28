@@ -31,6 +31,7 @@ const { ccclass } = cc._decorator;
 @ccclass
 @injectable({
     factory: () => NetStateMachine.get(),
+    share: true,
 })
 export default class NetStateMachine extends StateMachine {
     private static _ins: NetStateMachine = null;

@@ -6,12 +6,12 @@ import TestBindingDataCenter from "./TestBindingDataCenter";
  * @Author: Kinnon.Z
  * @Date: 2020-08-13 11:45:00
  * @Last Modified by: Kinnon.Z
- * @Last Modified time: 2020-08-13 11:49:23
+ * @Last Modified time: 2020-08-28 11:00:23
  */
 const { ccclass, property } = cc._decorator;
 @ccclass
 export default class TestBindingDataDriver1 extends cc.Component {
-    @inject(TestBindingDataCenter)
+    @inject
     private _data: TestBindingDataCenter;
     // ? ===================================================================================
     // ? life cycle

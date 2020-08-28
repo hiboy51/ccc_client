@@ -10,5 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "gulp": "^4.0.2"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
   }
 }
